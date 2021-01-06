@@ -16,12 +16,14 @@ namespace API.Classes.Utility
     {
         private IConfiguration configuration;
         private string privateKey;
+        private double expireTime;
 
         public JWTAuthenticationService(IConfiguration config)
         {
             configuration = config;
             IConfigurationSection JWTData = configuration.GetSection("JWTTokenData");
             privateKey = JWTData.GetSection("Private_Key").Value;
+            expireTime = Convert.ToDouble(JWTData.GetSection("Expires_In").Value);
         }
 
         public string CreateJWTToken(User user)
@@ -32,7 +34,7 @@ namespace API.Classes.Utility
                 Subject = new ClaimsIdentity(new Claim[] {
                     new Claim(ClaimTypes.Name, user.username)
                 }),
-                Expires = DateTime.UtcNow.AddHours(24),
+                Expires = DateTime.UtcNow.AddHours(expireTime),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
             };
             SecurityToken token = handler.CreateToken(descriptor);
