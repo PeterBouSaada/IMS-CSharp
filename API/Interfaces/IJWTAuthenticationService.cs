@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace API.Interfaces
 {
-    interface IJWTAuthenticationService
+    public interface IJWTAuthenticationService
     {
         string CreateJWTToken(User user);
     }

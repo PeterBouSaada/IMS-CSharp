@@ -12,5 +12,6 @@ namespace API.Interfaces
         User UpdateUser(User user);
         User DeleteUser(User user);
         List<User> FindUser(User user);
+        string AuthenticateUser(User user);
     }
 }

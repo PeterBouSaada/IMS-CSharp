@@ -6,10 +6,11 @@ using API.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using API.Models;
-
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("API/[controller]")]
     public class UserController : ControllerBase
@@ -43,6 +44,18 @@ namespace API.Controllers
         {
             return _userService.UpdateUser(user) != null ? new ObjectResult(user) { StatusCode = StatusCodes.Status200OK } : new ObjectResult(user) { StatusCode = StatusCodes.Status400BadRequest };
 
+        }
+
+        [AllowAnonymous]
+        [HttpPost("authenticate")]
+        public IActionResult Authenticate([FromBody] User user)
+        {
+            string token = _userService.AuthenticateUser(user);
+            if(token == null)
+            {
+                return Unauthorized();
+            }
+            return Ok(token);
         }
 
     }
