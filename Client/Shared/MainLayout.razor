@@ -1,0 +1,17 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager NavManager
+@using Client.Classes
+@inject Utility utility
+
+@if(utility.getCurrentPage() != HomePage)
+{
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+}
+@Body
+
+
+@code {
+    private string HomePage = "/";
+}

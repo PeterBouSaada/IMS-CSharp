@@ -21,7 +21,7 @@ namespace API.Controllers
             _userService = userService;
         }
 
-        [HttpGet]
+        [HttpPost("search")]
         public List<User> Get(User user)
         {
             return _userService.FindUser(user);

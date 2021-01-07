@@ -21,7 +21,7 @@ namespace API.Controllers
             _itemService = itemService;
         }
 
-        [HttpGet]
+        [HttpPost("search")]
         public List<Item> Get(Item item)
         {
             return _itemService.FindItem(item);

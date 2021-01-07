@@ -1,0 +1,35 @@
+﻿@page "/"
+@using System.Net.Http
+@inject HttpClient Http
+@using Models
+@using Interfaces
+@using Classes
+
+
+<div class="login-container">
+    <div class="small-form">
+        <h2 class="form-title">Login to IMS v1.0.0</h2>
+        <div class="login-form">
+            <input type="text" name="username" placeholder="username" spellcheck="false" @bind-value="username" />
+            <input type="password" name="username" placeholder="password" @bind-value="password" />
+            <button type="submit" @onclick="SubmitLogin">Login</button>
+        </div>
+    </div>
+</div>
+
+@code{
+
+    private string username;
+    private string password;
+
+    private void SubmitLogin()
+    {
+        User user = new User();
+        user.username = username;
+        user.password = password;
+
+        IHttpRequestService<User> requestService = new HttpRequestService<User>(Http);
+        requestService.PostRequest(user, "https://localhost:5001/API/user/authenticate");
+    }
+
+}
