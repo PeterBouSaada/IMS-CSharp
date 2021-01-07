@@ -2,6 +2,8 @@
 /**/.vs
 /**/API/bin
 /**/API/obj
+/**/Client/bin
+/**/Client/obj
 *.dll
 *.pdb
 *.cache

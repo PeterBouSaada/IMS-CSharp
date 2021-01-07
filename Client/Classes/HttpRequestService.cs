@@ -1,6 +1,8 @@
 ﻿using Client.Interfaces;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -14,7 +16,7 @@ namespace Client.Classes
     public class HttpRequestService<T> : IHttpRequestService<T>
     {
         private HttpClient httpClient;
-        private string bearerToken;
+        private string bearerToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6InBib3VzYWFkYSIsIm5iZiI6MTYxMDA0NzAxNCwiZXhwIjoxNjEwMTMzNDE0LCJpYXQiOjE2MTAwNDcwMTR9.jZMEM4Ovbylg6ZpRiBq45v3cYPTfMhkmFh01GpIL4As";
 
         public HttpRequestService(HttpClient client)
         {
@@ -33,38 +35,32 @@ namespace Client.Classes
 
         public async Task<HttpStatusCode> PostRequest(T data, string url)
         {
-            Dictionary<string, string> request = ParseDataToDictionary(data);
-            foreach(KeyValuePair<string, string> pair in request)
+            if(bearerToken == null && url != "https://localhost:5001/API/user/authenticate")
             {
-                Console.WriteLine(pair.Key + ": " + pair.Value);
+                return HttpStatusCode.Unauthorized;
             }
-            var content = new StringContent(request.ToString(), Encoding.UTF8, "application/json");
+
+            if(bearerToken != null)
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
+            }
+            string request = JsonConvert.SerializeObject(data, Formatting.None, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+            var content = new StringContent(request, Encoding.UTF8, "application/json");
             HttpResponseMessage response = await httpClient.PostAsync(url, content);
-            Console.WriteLine(response.StatusCode + ": " + response.Content);
+
+            string ret = await response.Content.ReadAsStringAsync();
+
+            if (response.StatusCode == HttpStatusCode.OK && url == "https://localhost:5001/API/user/authenticate")
+            {
+                bearerToken = ret;
+            }
+            Console.WriteLine(ret);
             return response.StatusCode;
         }
 
         public HttpStatusCode PutRequest(T data, string url)
         {
             throw new NotImplementedException();
-        }
-
-        private Dictionary<string, string> ParseDataToDictionary(T data)
-        {
-            PropertyInfo[] dataInfo = data.GetType().GetProperties();
-
-            Dictionary<string, string> result = new Dictionary<string, string>();
-
-            foreach(PropertyInfo property in dataInfo)
-            {
-                if(property.GetValue(data) != null)
-                {
-                    result.Add(property.Name, property.GetValue(data).ToString());
-                }
-            }
-
-            return result;
-
         }
 
     }

@@ -29,7 +29,7 @@
         user.password = password;
 
         IHttpRequestService<User> requestService = new HttpRequestService<User>(Http);
-        requestService.PostRequest(user, "https://localhost:5001/API/user/authenticate");
+        requestService.PostRequest(user, "https://localhost:5001/API/user/search");
     }
 
 }
