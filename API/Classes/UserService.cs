@@ -56,6 +56,18 @@ namespace API.Classes
             }
         }
 
+        public User FindOneUser(string id)
+        {
+            try
+            {
+                return collection.Find(f => f.id == id).FirstOrDefault();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         public List<User> FindUser(User user)
         {
             PropertyInfo[] ItemProperties = user.GetType().GetProperties();

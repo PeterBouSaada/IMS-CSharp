@@ -1,6 +1,9 @@
 ﻿@page "/"
-@using System.Net.Http
+@using System.Net
 @inject HttpClient Http
+@inject NavigationManager NavManager
+@inject Blazored.LocalStorage.LocalStorageService localStorage
+@inject Utility utility
 @using Models
 @using Interfaces
 @using Classes
@@ -18,18 +21,34 @@
 </div>
 
 @code{
+    protected override void OnInitialized()
+    {
+        string token = localStorage.GetItemAsString("BearerToken");
+        if (token != null && !Utility.isTokenExpired(token))
+        {
+            NavManager.NavigateTo("Management");
+        }
+    }
 
     private string username;
     private string password;
 
-    private void SubmitLogin()
+    private async void SubmitLogin()
     {
         User user = new User();
         user.username = username;
         user.password = password;
 
-        IHttpRequestService<User> requestService = new HttpRequestService<User>(Http);
-        requestService.PostRequest(user, "https://localhost:5001/API/user/search");
+        IHttpRequestService<User> requestService = new HttpRequestService<User>(Http, localStorage);
+
+        HttpStatusCode request = await Task.Run(() => (requestService.tokenRequest(user)));
+
+        if (request == HttpStatusCode.OK)
+        {
+            NavManager.NavigateTo("Management");
+        }
+
     }
+
 
 }

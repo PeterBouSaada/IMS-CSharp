@@ -12,6 +12,7 @@ namespace API.Interfaces
         User UpdateUser(User user);
         User DeleteUser(User user);
         List<User> FindUser(User user);
+        User FindOneUser(string id);
         string AuthenticateUser(User user);
     }
 }

@@ -74,6 +74,18 @@ namespace API.Classes
             return collection.Find(finalFilter).ToList();
         }
 
+        public Item FindOneItem(string id)
+        {
+            try
+            {
+                return collection.Find(f => f.id == id).FirstOrDefault();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         public Item UpdateItem(Item item)
         {
             Item OldItem = collection.Find(f => f.id == item.id).FirstOrDefault();

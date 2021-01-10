@@ -13,5 +13,6 @@ namespace API.Interfaces
         Item UpdateItem(Item item);
         Item DeleteItem(Item item);
         List<Item> FindItem(Item item);
+        Item FindOneItem(string id);
     }
 }

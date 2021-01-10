@@ -10,17 +10,19 @@ using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Blazored.LocalStorage;
 
 namespace Client.Classes
 {
     public class HttpRequestService<T> : IHttpRequestService<T>
     {
-        private HttpClient httpClient;
-        private string bearerToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6InBib3VzYWFkYSIsIm5iZiI6MTYxMDA0NzAxNCwiZXhwIjoxNjEwMTMzNDE0LCJpYXQiOjE2MTAwNDcwMTR9.jZMEM4Ovbylg6ZpRiBq45v3cYPTfMhkmFh01GpIL4As";
+        private HttpClient httpClient { get; set; }
+        private LocalStorageService localStorage { get; set; }
 
-        public HttpRequestService(HttpClient client)
+        public HttpRequestService(HttpClient client, LocalStorageService storage)
         {
             httpClient = client;
+            localStorage = storage;
         }
 
         public HttpStatusCode DeleteRequest(T data, string url)
@@ -33,28 +35,34 @@ namespace Client.Classes
             throw new NotImplementedException();
         }
 
-        public async Task<HttpStatusCode> PostRequest(T data, string url)
+        public async Task<HttpResponseMessage> PostRequest(T data, string url)
         {
-            if(bearerToken == null && url != "https://localhost:5001/API/user/authenticate")
+            HttpResponseMessage response = new HttpResponseMessage();
+            string token = localStorage.GetItemAsString("BearerToken");
+            if (token == null)
             {
-                return HttpStatusCode.Unauthorized;
+                response.StatusCode = HttpStatusCode.Unauthorized;
+                return response;
             }
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            string request = JsonConvert.SerializeObject(data, Formatting.None, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+            
+            var content = new StringContent(request, Encoding.UTF8, "application/json");
+            response = await httpClient.PostAsync(url, content);
 
-            if(bearerToken != null)
-            {
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
-            }
+            return response;
+        }
+
+        public async Task<HttpStatusCode> tokenRequest(T data)
+        {
             string request = JsonConvert.SerializeObject(data, Formatting.None, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
             var content = new StringContent(request, Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await httpClient.PostAsync(url, content);
-
-            string ret = await response.Content.ReadAsStringAsync();
-
-            if (response.StatusCode == HttpStatusCode.OK && url == "https://localhost:5001/API/user/authenticate")
+            HttpResponseMessage response = await httpClient.PostAsync("https://localhost:5001/API/user/authenticate", content);
+            if (response.StatusCode == HttpStatusCode.OK)
             {
-                bearerToken = ret;
+                await localStorage.SetItemAsync("BearerToken", await response.Content.ReadAsStringAsync());
+                Console.WriteLine("we added the bearer token");
             }
-            Console.WriteLine(ret);
             return response.StatusCode;
         }
 

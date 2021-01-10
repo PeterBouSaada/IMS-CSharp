@@ -21,29 +21,39 @@ namespace API.Controllers
             _itemService = itemService;
         }
 
-        [HttpPost("search")]
-        public List<Item> Get(Item item)
+        [HttpGet]
+        public IActionResult Get(Item item)
         {
-            return _itemService.FindItem(item);
+            Item foundItem = _itemService.FindOneItem(item.id);
+            return foundItem != null ? new ObjectResult(foundItem) { StatusCode = StatusCodes.Status200OK } : new ObjectResult(foundItem) { StatusCode = StatusCodes.Status400BadRequest };
+        }
+
+        [HttpPost("search")]
+        public IActionResult Search(Item item)
+        {
+            List<Item> items = _itemService.FindItem(item);
+            return items != null ? new ObjectResult(items) { StatusCode = StatusCodes.Status200OK } : new ObjectResult(items) { StatusCode = StatusCodes.Status400BadRequest };
         }
 
         [HttpPost]
         public IActionResult Add([FromBody] Item item)
         {
-            return _itemService.AddItem(item) != null ? new ObjectResult(item) { StatusCode = StatusCodes.Status201Created } : new ObjectResult(item) { StatusCode = StatusCodes.Status400BadRequest };
+            Item addedItem = _itemService.AddItem(item);
+            return addedItem != null ? new ObjectResult(addedItem) { StatusCode = StatusCodes.Status201Created } : new ObjectResult(addedItem) { StatusCode = StatusCodes.Status400BadRequest };
         }
 
         [HttpDelete]
         public IActionResult Delete([FromBody] Item item)
         {
-            return _itemService.DeleteItem(item) != null ? new ObjectResult(item) { StatusCode = StatusCodes.Status200OK} : new ObjectResult(item) { StatusCode = StatusCodes.Status400BadRequest };
+            Item deletedItem = _itemService.DeleteItem(item);
+            return deletedItem != null ? new ObjectResult(deletedItem) { StatusCode = StatusCodes.Status200OK} : new ObjectResult(deletedItem) { StatusCode = StatusCodes.Status400BadRequest };
         }
 
         [HttpPut]
         public IActionResult Update([FromBody] Item item)
         {
-            return _itemService.UpdateItem(item) != null ? new ObjectResult(item) { StatusCode = StatusCodes.Status200OK } : new ObjectResult(item) { StatusCode = StatusCodes.Status400BadRequest };
-
+            Item updatedItem = _itemService.UpdateItem(item);
+            return updatedItem != null ? new ObjectResult(updatedItem) { StatusCode = StatusCodes.Status200OK } : new ObjectResult(updatedItem) { StatusCode = StatusCodes.Status400BadRequest };
         }
 
     }

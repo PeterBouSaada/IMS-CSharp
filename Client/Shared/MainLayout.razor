@@ -1,17 +1,22 @@
 ﻿@inherits LayoutComponentBase
+@using Classes
+@using Blazored.LocalStorage
 @inject NavigationManager NavManager
-@using Client.Classes
-@inject Utility utility
+@inject Utility util
+@inject LocalStorageService localStorage 
 
-@if(utility.getCurrentPage() != HomePage)
-{
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-}
+
 @Body
 
-
 @code {
-    private string HomePage = "/";
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        string page = util.getCurrentPage();
+        if (util.getCurrentPage() != "/" && Utility.isTokenExpired(localStorage.GetItemAsString("BearerToken")))
+        {
+            NavManager.NavigateTo("/");
+        }
+    }
+
 }
