@@ -55,6 +55,13 @@ namespace API.Controllers
             User updatedUser = _userService.UpdateUser(user);
             return updatedUser != null ? new ObjectResult(updatedUser) { StatusCode = StatusCodes.Status200OK } : new ObjectResult(updatedUser) { StatusCode = StatusCodes.Status400BadRequest };
         }
+        
+        [HttpGet("getAll")]
+        public IActionResult getAll()
+        {
+            List<User> users = _userService.getAllUsers();
+            return users != null ? new ObjectResult(users) { StatusCode = StatusCodes.Status200OK } : new ObjectResult(users) { StatusCode = StatusCodes.Status400BadRequest };
+        }
 
         [AllowAnonymous]
         [HttpPost("authenticate")]

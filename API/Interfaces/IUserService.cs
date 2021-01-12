@@ -14,5 +14,6 @@ namespace API.Interfaces
         List<User> FindUser(User user);
         User FindOneUser(string id);
         string AuthenticateUser(User user);
+        List<User> getAllUsers();
     }
 }

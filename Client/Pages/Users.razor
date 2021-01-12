@@ -1,5 +1,8 @@
 ﻿@page "/Users"
- 
+@inject HttpClient Http
+@inject Blazored.LocalStorage.LocalStorageService localStorage
+@using Models
+
 <div class="user-container">
     <div class="navigation">
         <ul>
@@ -9,11 +12,31 @@
     </div>
     <div class="container">
         <div class="search-box">
-            <input type="text" name="search" placeholder="Find users..." spellcheck="false"/>
+            <input type="text" name="search" placeholder="Find users..." spellcheck="false" @bind-value="searchQuery" @onkeyup="SubmitUserSearch" />
+        </div>
+        <div class="users-list">
+            <UserCards @ref="userCards"></UserCards>
         </div>
     </div>
 </div>
 
 @code {
 
+    private string searchQuery { get; set; }
+    private UserCards userCards;
+
+    public async Task SubmitUserSearch(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" || e.Key == "NumpadEnter")
+        {
+            await GetUsers();
+        }
+    }
+
+    public async Task GetUsers()
+    {
+        User user = new User();
+        user.username = searchQuery;
+        await userCards.GetAllUsers(user);
+    }
 }

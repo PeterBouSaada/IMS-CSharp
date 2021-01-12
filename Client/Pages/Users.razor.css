@@ -54,3 +54,55 @@ ul {
             outline: none;
             color: #E0A100;
         }
+
+.users-list {
+    width: 100%;
+    height: calc(100% - 50px);
+    padding: 5%;
+    display: grid;
+    grid-gap: 5.3% 5%;
+    grid-template-columns: 28% 28% 28%  ;
+    grid-auto-rows: 60px;
+}
+
+::deep .card {
+    background-color: #2B302E;
+    border: 2px solid #E0A100;
+}
+
+::deep .user-info {
+    width: 70%;
+    height: 100%;
+    float: left;
+    display: block;
+    padding: 10px;
+    color: #E0A100;
+}
+
+::deep .user-info .username{
+    color: #E0A100;
+    line-height: 40px;
+}
+
+::deep .action-list {
+    width: 30%;
+    height: 100%;
+    float: left;
+    display: block;
+}
+
+    ::deep .action-list button {
+        width: 50%;
+        display: block;
+        float: left;
+        height: 100%;
+        background: #FFE299;
+        border: none;
+        outline: none;
+        transition: all ease-in-out 0.1s;
+        border-left: 2px solid #E0A100;
+    }
+
+        ::deep .action-list button:hover {
+            background: #E0A100;
+        }

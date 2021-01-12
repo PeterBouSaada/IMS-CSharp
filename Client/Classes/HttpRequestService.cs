@@ -30,9 +30,19 @@ namespace Client.Classes
             throw new NotImplementedException();
         }
 
-        public List<T> GetRequest(T data, string url)
+        public async Task<HttpResponseMessage> GetRequest(T data, string url)
         {
-            throw new NotImplementedException();
+            HttpResponseMessage response = new HttpResponseMessage();
+            string token = localStorage.GetItemAsString("BearerToken");
+            if (token == null)
+            {
+                response.StatusCode = HttpStatusCode.Unauthorized;
+                return response;
+            }
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            response = await httpClient.GetAsync(url);
+
+            return response;
         }
 
         public async Task<HttpResponseMessage> PostRequest(T data, string url)

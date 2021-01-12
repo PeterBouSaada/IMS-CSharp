@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using API.Classes.Utility;
+using MongoDB.Bson;
 
 namespace API.Classes
 {
@@ -78,7 +79,7 @@ namespace API.Classes
             for (int i = 0; i < ItemProperties.Length; i++)
             {
                 if (ItemProperties[i].GetValue(user) != null)
-                    filters.Add(FilterBuilder.Eq(ItemProperties[i].Name, ItemProperties[i].GetValue(user)));
+                    filters.Add(FilterBuilder.Regex(ItemProperties[i].Name, new BsonRegularExpression(ItemProperties[i].GetValue(user).ToString())));
             }
 
             finalFilter = FilterBuilder.And(filters);
@@ -160,5 +161,16 @@ namespace API.Classes
             user.password = HashService.HashString(PassSaltCombination);
         }
 
+        public List<User> getAllUsers()
+        {
+            try
+            {
+                return collection.Find(Builders<User>.Filter.Empty).ToList();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
     }
 }

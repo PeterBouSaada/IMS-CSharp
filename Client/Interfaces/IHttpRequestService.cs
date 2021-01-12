@@ -9,7 +9,7 @@ namespace Client.Interfaces
 {
     public interface IHttpRequestService<T>
     {
-        public List<T> GetRequest(T data, string url);
+        public Task<HttpResponseMessage> GetRequest(T data, string url);
         public Task<HttpResponseMessage> PostRequest(T data, string url);
         public HttpStatusCode DeleteRequest(T data, string url);
         public HttpStatusCode PutRequest(T data, string url);
