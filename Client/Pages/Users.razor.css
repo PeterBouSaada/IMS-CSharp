@@ -15,6 +15,8 @@
 ul {
     width: 100%;
     height: 100%;
+    display: block;
+    position: relative;
 }
 
     ul li {
@@ -27,6 +29,14 @@ ul {
         cursor: pointer;
     }
 
+    ul .bottom {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        border-bottom: none;
+        border-top: 2px solid #E0A100;
+    }
+
         ul li:hover {
             background: #444b49;
         }
@@ -34,9 +44,9 @@ ul {
 .container {
     width: 80%;
     height: 100%;
-    float: right;
+    float: left;
+    transition: all ease-in 0.1s;
 }
-
     .container .search-box {
         width: 100%;
         height: 50px;
@@ -58,11 +68,81 @@ ul {
 .users-list {
     width: 100%;
     height: calc(100% - 50px);
+    top: 50px;
     padding: 5%;
     display: grid;
-    grid-gap: 5.3% 5%;
+    grid-gap: 5% 5.3%;
     grid-template-columns: 28% 28% 28%  ;
     grid-auto-rows: 60px;
+}
+
+.add-container {
+    display: none;
+    width: 80%;
+    height: 100%;
+    float: left;
+    transition: all ease-in 0.1s;
+    justify-content: center;
+}
+
+.add-container input {
+    display: block;
+    width: 40%;
+    font-size: 20px;
+    margin: auto;
+    outline: none;
+    padding: 1%;
+    border: 2px solid #FFE299;
+    transition: all ease-in 0.1s;
+    background: #2B302E;
+    color: #E0A100;
+    height: 50px;
+    font-weight: 300;
+}
+
+    .add-container input::placeholder {
+        color: #E0A100;
+        opacity: 1;
+    }
+
+    .add-container input:focus {
+        border: 2px solid #E0A100;
+    }
+
+button {
+    display: block;
+    font-size: 24px;
+    background-color: #FFE299;
+    margin: auto;
+    outline: none;
+    border: none;
+    padding: 0 5%;
+    color: #1D201F;
+    transition: all ease-in 0.1s;
+    height: 50px;
+}
+
+    button:hover, button:focus {
+        background-color: #E0A100;
+    }
+
+.add-container .add-user-form {
+    width: 100%;
+    height: 30%;
+    margin: auto;
+    display: block;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.add-container span{
+    color: red;
+    display: block;
+    width: 100%;
+    height: 15px;
+    text-align: center;
 }
 
 ::deep .card {
@@ -106,3 +186,7 @@ ul {
         ::deep .action-list button:hover {
             background: #E0A100;
         }
+
+::deep .loading {
+    color: red;
+}

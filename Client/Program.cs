@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Client.Classes;
 using Blazored.LocalStorage;
+using Microsoft.JSInterop;
 
 namespace Client
 {

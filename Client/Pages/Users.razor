@@ -1,21 +1,35 @@
 ﻿@page "/Users"
 @inject HttpClient Http
 @inject Blazored.LocalStorage.LocalStorageService localStorage
+@inject IJSRuntime js
+@inject NavigationManager NavManager
 @using Models
+@using Classes
+@using System.Net
 
 <div class="user-container">
     <div class="navigation">
         <ul>
-            <li>Users</li>
-            <li>Add user</li>
+            <li @onclick='showUsersAndRefresh'>Users</li>
+            <li @onclick='f => callJsFunction("ShowAddMenu")'>Add user</li>
+            <li class="bottom" @onclick='backToManagement'>Go back</li>
         </ul>
     </div>
-    <div class="container">
+    <div class="container" id="user-container">
         <div class="search-box">
             <input type="text" name="search" placeholder="Find users..." spellcheck="false" @bind-value="searchQuery" @onkeyup="SubmitUserSearch" />
         </div>
         <div class="users-list">
             <UserCards @ref="userCards"></UserCards>
+        </div>
+    </div>
+    <div class="add-container" id="add-container">
+        <div class="add-user-form">
+            <span>@result</span>
+            <input type="text" name="username" @bind-value="username" placeholder="username" />
+            <input type="password" name="password" @bind-value="password" placeholder="password" />
+            <input type="password" name="rePassword" @bind-value="rePassword" placeholder="confirm password" />
+            <button @onclick="AddUser">Add new user</button>
         </div>
     </div>
 </div>
@@ -24,6 +38,58 @@
 
     private string searchQuery { get; set; }
     private UserCards userCards;
+    private string username { get; set; }
+    private string password { get; set; }
+    private string rePassword { get; set; }
+    private string result { get; set; }
+
+    public async Task AddUser()
+    {
+        result = "";
+        User user = new User();
+        if (username == null || username == "")
+        {
+            return;
+        }
+        if (password == null || password == "")
+        {
+            return;
+        }
+        if (password != rePassword)
+        {
+            result = "Passwords do not match";
+            return;
+        }
+
+        user.username = username;
+        user.password = password;
+
+        HttpRequestService<User> requestService = new HttpRequestService<User>(Http, localStorage);
+        HttpResponseMessage response = await requestService.PostRequest(user, "Https://localhost:5001/API/user");
+
+        if (response.StatusCode == HttpStatusCode.Created)
+        {
+            result = "Added new user " + user.username;
+        }
+        else if (response.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            result = "Unauthorized to add new user, try logging back in";
+        }
+        else
+        {
+            result = "Unable to add user";
+        }
+
+        username = "";
+        password = "";
+        rePassword = "";
+
+    }
+
+    public void backToManagement()
+    {
+        NavManager.NavigateTo("/Management");
+    }
 
     public async Task SubmitUserSearch(KeyboardEventArgs e)
     {
@@ -39,4 +105,16 @@
         user.username = searchQuery;
         await userCards.GetAllUsers(user);
     }
+
+    public async Task showUsersAndRefresh()
+    {
+        await callJsFunction("ShowUsersMenu");
+        await GetUsers();
+    }
+
+    public async Task callJsFunction(string funcName)
+    {
+        await js.InvokeVoidAsync(funcName);
+    }
+
 }
