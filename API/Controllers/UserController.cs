@@ -21,10 +21,10 @@ namespace API.Controllers
             _userService = userService;
         }
 
-        [HttpGet]
-        public IActionResult Get(User user)
+        [HttpGet("{id}")]
+        public IActionResult Get(string id)
         {
-            User foundUser = _userService.FindOneUser(user.id);
+            User foundUser = _userService.FindOneUser(id);
             return  foundUser != null ? new ObjectResult(foundUser) { StatusCode = StatusCodes.Status200OK } : new ObjectResult(foundUser) { StatusCode = StatusCodes.Status400BadRequest };
         }
 
@@ -42,10 +42,10 @@ namespace API.Controllers
             return addedUser != null ? new ObjectResult(addedUser) { StatusCode = StatusCodes.Status201Created } : new ObjectResult(addedUser) { StatusCode = StatusCodes.Status400BadRequest };
         }
 
-        [HttpDelete]
-        public IActionResult Delete([FromBody] User user)
+        [HttpDelete("{id}")]
+        public IActionResult Delete(string id)
         {
-            User deletedUser = _userService.DeleteUser(user);
+            User deletedUser = _userService.DeleteUser(id);
             return deletedUser != null ? new ObjectResult(deletedUser) { StatusCode = StatusCodes.Status200OK } : new ObjectResult(deletedUser) { StatusCode = StatusCodes.Status400BadRequest };
         }
 

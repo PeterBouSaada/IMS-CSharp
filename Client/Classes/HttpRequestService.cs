@@ -25,9 +25,20 @@ namespace Client.Classes
             localStorage = storage;
         }
 
-        public HttpStatusCode DeleteRequest(T data, string url)
+        public async Task<HttpResponseMessage> DeleteRequest(string id, string url)
         {
-            throw new NotImplementedException();
+            HttpResponseMessage response = new HttpResponseMessage();
+            string token = localStorage.GetItemAsString("BearerToken");
+            if (token == null)
+            {
+                response.StatusCode = HttpStatusCode.Unauthorized;
+                return response;
+            }
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            url += "/" + id;
+            response = await httpClient.DeleteAsync(url);
+
+            return response;
         }
 
         public async Task<HttpResponseMessage> GetRequest(T data, string url)
@@ -76,9 +87,22 @@ namespace Client.Classes
             return response.StatusCode;
         }
 
-        public HttpStatusCode PutRequest(T data, string url)
+        public async Task<HttpResponseMessage> PutRequest(T data, string url)
         {
-            throw new NotImplementedException();
+            HttpResponseMessage response = new HttpResponseMessage();
+            string token = localStorage.GetItemAsString("BearerToken");
+            if (token == null)
+            {
+                response.StatusCode = HttpStatusCode.Unauthorized;
+                return response;
+            }
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            string request = JsonConvert.SerializeObject(data, Formatting.None, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+
+            var content = new StringContent(request, Encoding.UTF8, "application/json");
+            response = await httpClient.PutAsync(url, content);
+
+            return response;
         }
 
     }

@@ -45,11 +45,11 @@ namespace API.Classes
             }
         }
 
-        public User DeleteUser(User user)
+        public User DeleteUser(string id)
         {
             try
             {
-                return collection.FindOneAndDelete(f => f.id == user.id);
+                return collection.FindOneAndDelete(f => f.id == id);
             }
             catch (Exception)
             {

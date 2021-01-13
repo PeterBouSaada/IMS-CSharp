@@ -11,8 +11,8 @@ namespace Client.Interfaces
     {
         public Task<HttpResponseMessage> GetRequest(T data, string url);
         public Task<HttpResponseMessage> PostRequest(T data, string url);
-        public HttpStatusCode DeleteRequest(T data, string url);
-        public HttpStatusCode PutRequest(T data, string url);
+        public Task<HttpResponseMessage> DeleteRequest(string id, string url);
+        public Task<HttpResponseMessage> PutRequest(T data, string url);
         public Task<HttpStatusCode> tokenRequest(T data);
     }
 }

@@ -1,5 +1,6 @@
 ﻿@inject HttpClient Http
 @inject Blazored.LocalStorage.LocalStorageService localStorage
+@inject IJSRuntime js
 @using Classes
 @using Models
 @using System.Net
@@ -14,18 +15,25 @@
             </div>
         </div>
         <div class="action-list">
-            <button class="edit-button">Edit</button>
+            <button class="edit-button" @onclick="f => ShowEditScreen(user)">Edit</button>
             <button class="delete-button">Delete</button>
         </div>
     </div>
 }
 @code{
+    public User workingUser = new User();
     public List<User> users = new List<User>();
 
     protected async override Task OnInitializedAsync()
     {
         User user = new User();
         await GetAllUsers(user);
+    }
+
+    public async Task ShowEditScreen(User user)
+    {
+        workingUser = user;
+        await js.InvokeVoidAsync("ShowEditScreen");
     }
 
     public async Task GetAllUsers(User user)

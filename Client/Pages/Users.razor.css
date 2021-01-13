@@ -37,9 +37,9 @@ ul {
         border-top: 2px solid #E0A100;
     }
 
-        ul li:hover {
-            background: #444b49;
-        }
+    ul li:hover {
+        background: #444b49;
+    }
 
 .container {
     width: 80%;
@@ -47,6 +47,7 @@ ul {
     float: left;
     transition: all ease-in 0.1s;
 }
+
     .container .search-box {
         width: 100%;
         height: 50px;
@@ -72,7 +73,7 @@ ul {
     padding: 5%;
     display: grid;
     grid-gap: 5% 5.3%;
-    grid-template-columns: 28% 28% 28%  ;
+    grid-template-columns: 28% 28% 28%;
     grid-auto-rows: 60px;
 }
 
@@ -85,65 +86,134 @@ ul {
     justify-content: center;
 }
 
-.add-container input {
-    display: block;
-    width: 40%;
-    font-size: 20px;
-    margin: auto;
-    outline: none;
-    padding: 1%;
-    border: 2px solid #FFE299;
-    transition: all ease-in 0.1s;
-    background: #2B302E;
-    color: #E0A100;
-    height: 50px;
-    font-weight: 300;
-}
-
-    .add-container input::placeholder {
+    .add-container input {
+        display: block;
+        width: 40%;
+        font-size: 20px;
+        margin: auto;
+        outline: none;
+        padding: 1%;
+        border: 2px solid #FFE299;
+        transition: all ease-in 0.1s;
+        background: #2B302E;
         color: #E0A100;
-        opacity: 1;
+        height: 50px;
+        font-weight: 300;
     }
 
-    .add-container input:focus {
-        border: 2px solid #E0A100;
+        .add-container input::placeholder {
+            color: #E0A100;
+            opacity: 1;
+        }
+
+        .add-container input:focus {
+            border: 2px solid #E0A100;
+        }
+
+    .add-container button {
+        display: block;
+        font-size: 24px;
+        background-color: #FFE299;
+        margin: auto;
+        outline: none;
+        border: none;
+        padding: 0 5%;
+        color: #1D201F;
+        transition: all ease-in 0.1s;
+        height: 50px;
     }
 
-button {
-    display: block;
-    font-size: 24px;
-    background-color: #FFE299;
-    margin: auto;
-    outline: none;
-    border: none;
-    padding: 0 5%;
-    color: #1D201F;
+        .add-container button:hover, button:focus {
+            background-color: #E0A100;
+        }
+
+    .add-container .add-user-form {
+        width: 100%;
+        height: 30%;
+        margin: auto;
+        display: block;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .add-container span {
+        color: red;
+        display: block;
+        width: 100%;
+        height: 15px;
+        text-align: center;
+    }
+
+.edit-container {
+    display: none;
+    width: 80%;
+    height: 100%;
+    float: left;
     transition: all ease-in 0.1s;
-    height: 50px;
+    justify-content: center;
 }
 
-    button:hover, button:focus {
-        background-color: #E0A100;
+    .edit-container input {
+        display: block;
+        width: 40%;
+        font-size: 20px;
+        margin: auto;
+        outline: none;
+        padding: 1%;
+        border: 2px solid #FFE299;
+        transition: all ease-in 0.1s;
+        background: #2B302E;
+        color: #E0A100;
+        height: 50px;
+        font-weight: 300;
     }
 
-.add-container .add-user-form {
-    width: 100%;
-    height: 30%;
-    margin: auto;
-    display: block;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-}
+        .edit-container input::placeholder {
+            color: #E0A100;
+            opacity: 1;
+        }
 
-.add-container span{
-    color: red;
-    display: block;
-    width: 100%;
-    height: 15px;
-    text-align: center;
-}
+        .edit-container input:focus {
+            border: 2px solid #E0A100;
+        }
+
+    .edit-container button {
+        display: block;
+        font-size: 24px;
+        background-color: #FFE299;
+        margin: auto;
+        outline: none;
+        border: none;
+        padding: 0 5%;
+        color: #1D201F;
+        transition: all ease-in 0.1s;
+        height: 50px;
+    }
+
+        .edit-container button:hover, button:focus {
+            background-color: #E0A100;
+        }
+
+    .edit-container .add-user-form {
+        width: 100%;
+        height: 30%;
+        margin: auto;
+        display: block;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .edit-container span {
+        color: red;
+        display: block;
+        width: 100%;
+        height: 15px;
+        text-align: center;
+    }
 
 ::deep .card {
     background-color: #2B302E;
@@ -159,10 +229,10 @@ button {
     color: #E0A100;
 }
 
-::deep .user-info .username{
-    color: #E0A100;
-    line-height: 40px;
-}
+    ::deep .user-info .username {
+        color: #E0A100;
+        line-height: 40px;
+    }
 
 ::deep .action-list {
     width: 30%;
