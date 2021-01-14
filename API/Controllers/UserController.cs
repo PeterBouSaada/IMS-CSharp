@@ -16,16 +16,18 @@ namespace API.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        public UserController(IUserService userService)
+        private ICache<User> _cacheService;
+        public UserController(IUserService userService, ICache<User> cache)
         {
             _userService = userService;
+            _cacheService = cache;
         }
 
         [HttpGet("{id}")]
         public IActionResult Get(string id)
         {
-            User foundUser = _userService.FindOneUser(id);
-            return  foundUser != null ? new ObjectResult(foundUser) { StatusCode = StatusCodes.Status200OK } : new ObjectResult(foundUser) { StatusCode = StatusCodes.Status400BadRequest };
+            User foundUser = _cacheService.GetOrSet("user_" + id, 60 * 4 , () => _userService.FindOneUser(id));
+            return foundUser != null ? new ObjectResult(foundUser) { StatusCode = StatusCodes.Status200OK } : new ObjectResult(foundUser) { StatusCode = StatusCodes.Status400BadRequest };
         }
 
         [HttpPost("search")]

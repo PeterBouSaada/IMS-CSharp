@@ -20,8 +20,9 @@ namespace API.Classes
         private IMongoCollection<User> collection;
         private String MongoDatabase;
         private IJWTAuthenticationService _JWTAuthenticationService;
+        private ICache<User> cacheService;
 
-        public UserService(IConfiguration config, IJWTAuthenticationService JWTAuthService)
+        public UserService(IConfiguration config, IJWTAuthenticationService JWTAuthService, ICache<User> cache)
         {
             this._configuration = config;
             this._JWTAuthenticationService = JWTAuthService;
@@ -29,6 +30,7 @@ namespace API.Classes
             dbClient = new MongoClient(MongoDatabase);
             database = dbClient.GetDatabase("IMS");
             collection = database.GetCollection<User>("users");
+            cacheService = cache;
         }
 
         public User AddUser(User user)
@@ -49,6 +51,7 @@ namespace API.Classes
         {
             try
             {
+                cacheService.Expire("user_" + id);
                 return collection.FindOneAndDelete(f => f.id == id);
             }
             catch (Exception)
@@ -114,6 +117,7 @@ namespace API.Classes
             if (updates.Count > 0)
             {
                 UpdateResult result = collection.UpdateOne(f => f.id == user.id, finalUpdate);
+                cacheService.Expire("user_" + user.id);
                 if (result.ModifiedCount > 0)
                     return collection.Find(f => f.id == user.id).FirstOrDefault();
                 else

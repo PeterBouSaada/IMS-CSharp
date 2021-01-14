@@ -55,6 +55,9 @@ namespace API
                 };
             });
 
+            services.AddMemoryCache();
+            // register Cache as a generic singleton so we dont have to do it once for each model we want to cache.
+            services.AddSingleton(typeof(ICache<>), typeof(Cache<>));
             services.AddSingleton<IItemService, ItemService>();
             services.AddSingleton<IUserService, UserService>();
             services.AddSingleton<IJWTAuthenticationService, JWTAuthenticationService>();

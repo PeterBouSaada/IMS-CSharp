@@ -19,14 +19,16 @@ namespace API.Classes
         private IMongoDatabase database;
         private IMongoCollection<Item> collection;
         private String MongoDatabase;
+        private ICache<Item> cacheService;
 
-        public ItemService(IConfiguration config)
+        public ItemService(IConfiguration config, ICache<Item> cache)
         {
             this.configuration = config;
             MongoDatabase = configuration.GetConnectionString("Database");
             dbClient = new MongoClient(MongoDatabase);
             database = dbClient.GetDatabase("IMS");
             collection = database.GetCollection<Item>("items");
+            cacheService = cache;
         }
 
         public Item AddItem(Item item)
@@ -42,11 +44,12 @@ namespace API.Classes
             }
         }
 
-        public Item DeleteItem(Item item)
+        public Item DeleteItem(string id)
         {
             try
             {
-                return collection.FindOneAndDelete(f => f.id == item.id);
+                cacheService.Expire("item_" + id);
+                return collection.FindOneAndDelete(f => f.id == id);
             }
             catch (Exception)
             {
@@ -86,6 +89,18 @@ namespace API.Classes
             }
         }
 
+        public List<Item> getAllItems()
+        {
+            try
+            {
+                return collection.Find(Builders<Item>.Filter.Empty).ToList();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         public Item UpdateItem(Item item)
         {
             Item OldItem = collection.Find(f => f.id == item.id).FirstOrDefault();
@@ -113,6 +128,7 @@ namespace API.Classes
                 UpdateResult result = collection.UpdateOne(f => f.id == item.id, finalUpdate);
                 if (result.ModifiedCount > 0)
                 {
+                    cacheService.Expire("item_" + item.id);
                     return collection.Find(f => f.id == item.id).FirstOrDefault();
                 }
                 else
