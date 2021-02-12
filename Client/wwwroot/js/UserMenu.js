@@ -1,15 +1,22 @@
-﻿function ShowUsersMenu() {
+﻿function ShowPage(index) {
     var userContainer = document.getElementById("user-container");
     var addContainer = document.getElementById("add-container");
-    setTimeout(() => { userContainer.style.display = "block"; addContainer.style.display = "none"; }, 100);
-    userContainer.style.opacity = "1";
-    addContainer.style.opacity = "0";
-}
-
-function ShowAddMenu() {
-    var userContainer = document.getElementById("user-container");
-    var addContainer = document.getElementById("add-container");
-    setTimeout(() => { addContainer.style.display = "flex"; userContainer.style.display = "none"; }, 100);
-    addContainer.style.opacity = "1";
-    userContainer.style.opacity = "0";
+    var editContainer = document.getElementById("edit-container");
+    var deleteContainer = document.getElementById("delete-container");
+    Pages = [userContainer, addContainer, editContainer, deleteContainer];
+    for (i = 0; i < Pages.length; i++) {
+        if (i == index) {
+            if (index != 0) {
+                Pages[i].style.display = "flex";
+            }
+            else {
+                Pages[i].style.display = "block";
+            }
+            Pages[i].style.opacity = "1";
+        }
+        else {
+            Pages[i].style.display = "none";
+            Pages[i].style.opacity = "0";
+        }
+    }
 }

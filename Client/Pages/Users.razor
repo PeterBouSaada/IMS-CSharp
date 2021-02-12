@@ -6,12 +6,13 @@
 @using Models
 @using Classes
 @using System.Net
+@using Newtonsoft.Json
 
 <div class="user-container">
     <div class="navigation">
         <ul>
-            <li @onclick='f => callJsFunctionAndRefresh("ShowUserMenu")'>Users</li>
-            <li @onclick='f => callJsFunction("ShowAddMenu")'>Add user</li>
+            <li @onclick='f => callJsFunctionAndRefresh("ShowPage", 0)'>Users</li>
+            <li @onclick='f => callJsFunction("ShowPage", 1)'>Add user</li>
             <li class="bottom" @onclick='backToManagement'>Go back</li>
         </ul>
     </div>
@@ -20,111 +21,48 @@
             <input type="text" name="search" placeholder="Find users..." spellcheck="false" @bind-value="searchQuery" @onkeyup="SubmitUserSearch" />
         </div>
         <div class="users-list">
-            <UserCards @ref="userCards"></UserCards>
+            @foreach (User user in users)
+            {
+                <UserCards @ref="userCards" user="user" onUserEdit="userEdit" onUserDelete="userDelete"></UserCards>
+            }
         </div>
     </div>
     <div class="add-container" id="add-container">
-        <div class="add-user-form">
-            <span>@result</span>
-            <input type="text" name="username" @bind-value="username" placeholder="username" />
-            <input type="password" name="password" @bind-value="password" placeholder="password" />
-            <input type="password" name="rePassword" @bind-value="rePassword" placeholder="confirm password" />
-            <button @onclick="AddUser">Add new user</button>
-        </div>
+        <AddForm @ref="addForm"></AddForm>
     </div>
     <div class="edit-container" id="edit-container">
-        <div class="add-user-form">
-            <input type="text" name="username" @bind-value="editUsername" placeholder="username" />
-            <input type="password" name="password" @bind-value="editPassword" placeholder="password" />
-            <input type="password" name="rePassword" @bind-value="editRePassword" placeholder="confirm password" />
-            <button @onclick="EditUser">Edit user</button>
-        </div>
+        <Client.Pages.Children.EditForm @ref="editForm" getUsers="GetUsers"></Client.Pages.Children.EditForm>
+    </div>
+    <div class="delete-container" id="delete-container">
+        <DeleteForm @ref="deleteForm"></DeleteForm>
     </div>
 </div>
 
 @code {
 
     private string searchQuery { get; set; }
-    private UserCards userCards;
-    private string username { get; set; }
-    private string password { get; set; }
-    private string rePassword { get; set; }
-    private string editUsername{ get; set; }
-    private string editPassword { get; set; }
-    private string editRePassword { get; set; }
-    private string result { get; set; }
+    private UserCards userCards { get; set; }
+    private AddForm addForm { get; set; }
+    private Client.Pages.Children.EditForm editForm { get; set; }
+    private DeleteForm deleteForm { get; set; }
+    public List<User> users = new List<User>();
 
-    public async Task AddUser()
+    public async Task userEdit(User user)
     {
-        result = "";
-        User user = new User();
-        if (username == null || username == "")
-        {
-            return;
-        }
-        if (password == null || password == "")
-        {
-            return;
-        }
-        if (password != rePassword)
-        {
-            result = "Passwords do not match";
-            return;
-        }
-
-        user.username = username;
-        user.password = password;
-
-        HttpRequestService<User> requestService = new HttpRequestService<User>(Http, localStorage);
-        HttpResponseMessage response = await requestService.PostRequest(user, "Https://localhost:5001/API/user");
-
-        if (response.StatusCode == HttpStatusCode.Created)
-        {
-            result = "Added new user " + user.username;
-        }
-        else if (response.StatusCode == HttpStatusCode.Unauthorized)
-        {
-            result = "Unauthorized to add new user, try logging back in";
-        }
-        else
-        {
-            result = "Unable to add user";
-        }
-
-        username = "";
-        password = "";
-        rePassword = "";
-
+        editForm.editUsername = user.username;
+        await callJsFunction("ShowPage", 2);
+        editForm.user = user;
     }
 
-    public async Task EditUser()
+    public async Task userDelete(User user)
     {
-        userCards.workingUser.username = editUsername;
-        userCards.workingUser.password = editPassword;
+        deleteForm.user = user;
+    }
 
-        if (userCards.workingUser.username == null || userCards.workingUser.username == "")
-        {
-            return;
-        }
-        if (userCards.workingUser.password == null || userCards.workingUser.password == "")
-        {
-            return;
-        }
-        if (userCards.workingUser.password != editRePassword)
-        {
-            return;
-        }
-
-        HttpRequestService<User> requestService = new HttpRequestService<User>(Http, localStorage);
-        HttpResponseMessage response = await requestService.PutRequest(userCards.workingUser, "Https://localhost:5001/API/user");
-
-        userCards.workingUser.id = null;
-        userCards.workingUser.username = null;
-        userCards.workingUser.password = null;
-        editRePassword = "";
-
-        await callJsFunctionAndRefresh("RemoveEditScreen");
-
+    protected async override Task OnInitializedAsync()
+    {
+        User user = new User();
+        await GetAllUsers(user);
     }
 
     public void backToManagement()
@@ -144,18 +82,41 @@
     {
         User user = new User();
         user.username = searchQuery;
-        await userCards.GetAllUsers(user);
+        await GetAllUsers(user);
     }
 
-    public async Task callJsFunctionAndRefresh(string function)
+    public async Task GetAllUsers(User user)
     {
-        await callJsFunction("ShowUsersMenu");
+        HttpRequestService<User> requestService = new HttpRequestService<User>(Http, localStorage);
+        if (user.username == "" || user.username == null)
+        {
+            HttpResponseMessage request = await Task.Run(() => (requestService.GetRequest(user, "https://localhost:5001/API/user/getAll")));
+            if (request.StatusCode == HttpStatusCode.OK)
+            {
+                users = JsonConvert.DeserializeObject<List<User>>(await request.Content.ReadAsStringAsync());
+                StateHasChanged();
+            }
+        }
+        else
+        {
+            HttpResponseMessage request = await Task.Run(() => (requestService.PostRequest(user, "https://localhost:5001/API/user/search")));
+            if (request.StatusCode == HttpStatusCode.OK)
+            {
+                users = JsonConvert.DeserializeObject<List<User>>(await request.Content.ReadAsStringAsync());
+                StateHasChanged();
+            }
+        }
+    }
+
+    public async Task callJsFunctionAndRefresh(string function, object param)
+    {
+        await callJsFunction(function, param);
         await GetUsers();
     }
 
-    public async Task callJsFunction(string funcName)
+    public async Task callJsFunction(string funcName, object param)
     {
-        await js.InvokeVoidAsync(funcName);
+        await js.InvokeVoidAsync(funcName, param);
     }
 
 }

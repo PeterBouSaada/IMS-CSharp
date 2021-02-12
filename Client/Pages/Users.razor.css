@@ -86,66 +86,6 @@ ul {
     justify-content: center;
 }
 
-    .add-container input {
-        display: block;
-        width: 40%;
-        font-size: 20px;
-        margin: auto;
-        outline: none;
-        padding: 1%;
-        border: 2px solid #FFE299;
-        transition: all ease-in 0.1s;
-        background: #2B302E;
-        color: #E0A100;
-        height: 50px;
-        font-weight: 300;
-    }
-
-        .add-container input::placeholder {
-            color: #E0A100;
-            opacity: 1;
-        }
-
-        .add-container input:focus {
-            border: 2px solid #E0A100;
-        }
-
-    .add-container button {
-        display: block;
-        font-size: 24px;
-        background-color: #FFE299;
-        margin: auto;
-        outline: none;
-        border: none;
-        padding: 0 5%;
-        color: #1D201F;
-        transition: all ease-in 0.1s;
-        height: 50px;
-    }
-
-        .add-container button:hover, button:focus {
-            background-color: #E0A100;
-        }
-
-    .add-container .add-user-form {
-        width: 100%;
-        height: 30%;
-        margin: auto;
-        display: block;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .add-container span {
-        color: red;
-        display: block;
-        width: 100%;
-        height: 15px;
-        text-align: center;
-    }
-
 .edit-container {
     display: none;
     width: 80%;
@@ -154,66 +94,6 @@ ul {
     transition: all ease-in 0.1s;
     justify-content: center;
 }
-
-    .edit-container input {
-        display: block;
-        width: 40%;
-        font-size: 20px;
-        margin: auto;
-        outline: none;
-        padding: 1%;
-        border: 2px solid #FFE299;
-        transition: all ease-in 0.1s;
-        background: #2B302E;
-        color: #E0A100;
-        height: 50px;
-        font-weight: 300;
-    }
-
-        .edit-container input::placeholder {
-            color: #E0A100;
-            opacity: 1;
-        }
-
-        .edit-container input:focus {
-            border: 2px solid #E0A100;
-        }
-
-    .edit-container button {
-        display: block;
-        font-size: 24px;
-        background-color: #FFE299;
-        margin: auto;
-        outline: none;
-        border: none;
-        padding: 0 5%;
-        color: #1D201F;
-        transition: all ease-in 0.1s;
-        height: 50px;
-    }
-
-        .edit-container button:hover, button:focus {
-            background-color: #E0A100;
-        }
-
-    .edit-container .add-user-form {
-        width: 100%;
-        height: 30%;
-        margin: auto;
-        display: block;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .edit-container span {
-        color: red;
-        display: block;
-        width: 100%;
-        height: 15px;
-        text-align: center;
-    }
 
 ::deep .card {
     background-color: #2B302E;
